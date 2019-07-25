@@ -1,0 +1,3 @@
+Interaction Extension for TypicalBot
+====================================
+

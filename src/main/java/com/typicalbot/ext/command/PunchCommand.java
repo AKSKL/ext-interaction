@@ -17,17 +17,54 @@ package com.typicalbot.ext.command;
 
 import com.typicalbot.command.Command;
 import com.typicalbot.command.CommandArgument;
+import com.typicalbot.command.CommandCategory;
+import com.typicalbot.command.CommandConfiguration;
 import com.typicalbot.command.CommandContext;
 import com.typicalbot.command.CommandPermission;
+import net.dv8tion.jda.api.entities.User;
 
+import java.util.Random;
+
+@CommandConfiguration(category = CommandCategory.INTERACTION, aliases = "punch")
 public class PunchCommand implements Command {
+    @Override
+    public String[] usage() {
+        return new String[]{
+            "punch",
+            "punch [@user]"
+        };
+    }
+
+    @Override
+    public String description() {
+        return "Punch yourself or another person.";
+    }
+
     @Override
     public CommandPermission permission() {
         return CommandPermission.GUILD_MEMBER;
     }
 
     @Override
-    public void execute(CommandContext commandContext, CommandArgument commandArgument) {
-        //
+    public void execute(CommandContext context, CommandArgument argument) {
+        User target = context.getMessage().getAuthor();
+
+        if (argument.has()) {
+            User temp = context.getUser(argument.get(0));
+
+            if (temp != null) {
+                target = temp;
+            }
+        }
+
+        String[] addons = new String[]{
+            "Oh, dang! Right to the jaw! That must've hurt!"
+        };
+
+        if (target == context.getMessage().getAuthor()) {
+            context.sendMessage(target.getName() + ", stop hitting yourself! :punch:");
+        } else {
+            context.sendMessage(context.getMessage().getAuthor().getName() + " just punched " + target.getName() + "! :punch: " + addons[new Random().nextInt(addons.length)]);
+        }
     }
 }

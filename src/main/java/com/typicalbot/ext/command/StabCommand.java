@@ -17,17 +17,57 @@ package com.typicalbot.ext.command;
 
 import com.typicalbot.command.Command;
 import com.typicalbot.command.CommandArgument;
+import com.typicalbot.command.CommandCategory;
+import com.typicalbot.command.CommandConfiguration;
 import com.typicalbot.command.CommandContext;
 import com.typicalbot.command.CommandPermission;
+import net.dv8tion.jda.api.entities.User;
 
+import java.util.Random;
+
+@CommandConfiguration(category = CommandCategory.INTERACTION, aliases = {"stab", "slash"})
 public class StabCommand implements Command {
+    @Override
+    public String[] usage() {
+        return new String[]{
+            "stab",
+            "stab <@mention>"
+        };
+    }
+
+    @Override
+    public String description() {
+        return "'Stabs' the mentioned user.";
+    }
+
     @Override
     public CommandPermission permission() {
         return CommandPermission.GUILD_MEMBER;
     }
 
     @Override
-    public void execute(CommandContext commandContext, CommandArgument commandArgument) {
-        //
+    public void execute(CommandContext context, CommandArgument argument) {
+        User author = context.getMessage().getAuthor();
+
+        String[] options = {"", "Someone call the police! :oncoming_police_car:"};
+        Random rand = new Random();
+        int x = rand.nextInt(options.length);
+
+        if (!argument.has()) {
+            context.sendMessage("{0} stabbed themselves! :dagger::scream: {1}", author.getAsMention(), options[x]);
+            return;
+        }
+
+        User mention = context.getUser(argument.get(0));
+
+        if (mention.equals(author)) {
+            context.sendMessage("{0} stabbed themselves! :dagger::scream: {1}", author.getAsMention(), options[x]);
+            return;
+        } else if (mention == null) {
+            context.sendMessage("{0}, the specified user does not exist. Try again.", author.getAsMention());
+            return;
+        }
+
+        context.sendMessage("{0} just stabbed {1}! :dagger::scream: {2}", author.getAsMention(), mention.getAsMention(), options[x]);
     }
 }

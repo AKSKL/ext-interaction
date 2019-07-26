@@ -17,17 +17,58 @@ package com.typicalbot.ext.command;
 
 import com.typicalbot.command.Command;
 import com.typicalbot.command.CommandArgument;
+import com.typicalbot.command.CommandCategory;
+import com.typicalbot.command.CommandConfiguration;
 import com.typicalbot.command.CommandContext;
 import com.typicalbot.command.CommandPermission;
+import net.dv8tion.jda.api.entities.User;
 
+import java.util.Random;
+
+@CommandConfiguration(category = CommandCategory.INTERACTION, aliases = {"slap"})
 public class SlapCommand implements Command {
+    @Override
+    public String[] usage() {
+        return new String[]{
+            "slap",
+            "slap <@mention>"
+        };
+    }
+
+    @Override
+    public String description() {
+        return "'Slaps' the mentioned user.";
+    }
+
     @Override
     public CommandPermission permission() {
         return CommandPermission.GUILD_MEMBER;
     }
 
     @Override
-    public void execute(CommandContext commandContext, CommandArgument commandArgument) {
-        //
+    public void execute(CommandContext context, CommandArgument argument) {
+        User author = context.getMessage().getAuthor();
+
+        String[] options = {"", "Oh dang! That must've hurt!"};
+        Random rand = new Random();
+        int x = rand.nextInt(options.length);
+
+        if (!argument.has()) {
+            context.sendMessage("{0}, stop hitting yourself! :dizzy_face::wave::skin-tone-2: {1}", author.getAsMention(), options[x]);
+            return;
+        }
+
+        User mention = context.getUser(argument.get(0));
+
+        if (mention.equals(author)) {
+            context.sendMessage("{0}, stop hitting yourself! :dizzy_face::wave::skin-tone-2: {1}", author.getAsMention(), options[x]);
+            return;
+        } else if (mention == null) {
+            context.sendMessage("{0}, the specified user does not exist. Try again.", author.getAsMention());
+            return;
+        }
+
+        context.sendMessage("{0} just slapped {1}! :dizzy_face::wave::skin-tone-2: {2}", author.getAsMention(), mention.getAsMention(), options[x]);
     }
 }
+

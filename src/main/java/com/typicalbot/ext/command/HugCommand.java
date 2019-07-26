@@ -17,17 +17,54 @@ package com.typicalbot.ext.command;
 
 import com.typicalbot.command.Command;
 import com.typicalbot.command.CommandArgument;
+import com.typicalbot.command.CommandCategory;
+import com.typicalbot.command.CommandConfiguration;
 import com.typicalbot.command.CommandContext;
 import com.typicalbot.command.CommandPermission;
+import net.dv8tion.jda.api.entities.User;
 
+import java.util.Random;
+
+@CommandConfiguration(category = CommandCategory.INTERACTION, aliases = "hug")
 public class HugCommand implements Command {
+    @Override
+    public String[] usage() {
+        return new String[]{
+            "hug",
+            "hug [@user]"
+        };
+    }
+
+    @Override
+    public String description() {
+        return "Give yourself or another person a hug.";
+    }
+
     @Override
     public CommandPermission permission() {
         return CommandPermission.GUILD_MEMBER;
     }
 
     @Override
-    public void execute(CommandContext commandContext, CommandArgument commandArgument) {
-        //
+    public void execute(CommandContext context, CommandArgument argument) {
+        User target = context.getMessage().getAuthor();
+
+        if (argument.has()) {
+            User temp = context.getUser(argument.get(0));
+
+            if (temp != null) {
+                target = temp;
+            }
+        }
+
+        String[] addons = new String[]{
+            "Awww!"
+        };
+
+        if (target == context.getMessage().getAuthor()) {
+            context.sendMessage(target.getName() + " just gave themselves a hug. :hugging: *That's not weird at all.* :eyes:");
+        } else {
+            context.sendMessage(context.getMessage().getAuthor().getName() + " just gave " + target.getName() + " a hug! :hugging: " + addons[new Random().nextInt(addons.length)]);
+        }
     }
 }

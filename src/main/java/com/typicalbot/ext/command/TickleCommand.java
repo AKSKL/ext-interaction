@@ -56,7 +56,7 @@ public class TickleCommand implements Command {
         }
 
         if (target == context.getAuthor()) {
-            context.sendMessage("You tickled yourself.");
+            context.sendMessage("You tickled yourself. *That's not weird at all.* :eyes:");
         } else {
             context.sendMessage(context.getAuthor().getName() + " tickled " + target.getName() + "!");
         }
